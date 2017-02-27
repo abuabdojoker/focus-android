@@ -96,4 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onCreateView(name, context, attrs);
     }
+
+    public void firstrunFinished() {
+        if (pendingUrl != null) {
+            // We have received an URL in onNewIntent(). Let's load it now.
+            showBrowserScreen(pendingUrl);
+            pendingUrl = null;
+        } else {
+            showHomeScreen();
+        }
+    }
 }

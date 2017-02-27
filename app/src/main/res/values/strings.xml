@@ -45,4 +45,8 @@
     <string name="preference_category_mozilla">Mozilla</string>
     <string name="preference_mozilla_telemetry">Send anonymous usage data</string>
     <string name="preference_mozilla_telemetry_summary">Learn more</string>
+
+    <string name="firstrun_title">Browse like no one’s watching.</string>
+    <string name="firstrun_description">Automatically block online trackers while you browse. Then tap to erase visited pages, searches, cookies and passwords from your device.</string>
+    <string name="firstrun_button">OK, GOT IT!</string>
 </resources>
