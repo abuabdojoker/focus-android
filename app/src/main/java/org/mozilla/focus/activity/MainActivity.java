@@ -18,6 +18,7 @@ import android.view.View;
 
 import org.mozilla.focus.R;
 import org.mozilla.focus.fragment.BrowserFragment;
+import org.mozilla.focus.fragment.FirstrunFragment;
 import org.mozilla.focus.fragment.HomeFragment;
 import org.mozilla.focus.web.IWebView;
 import org.mozilla.focus.web.WebViewProvider;
@@ -36,9 +37,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
-            showBrowserScreen(getIntent().getDataString());
+            final String url = getIntent().getDataString();
+
+            if (FirstrunFragment.shouldShowFirstrun(this)) {
+                pendingUrl = url;
+                showFirstrun();
+            } else {
+                showBrowserScreen(url);
+            }
         } else {
-            showHomeScreen();
+            if (FirstrunFragment.shouldShowFirstrun(this)) {
+                showFirstrun();
+            } else {
+                showHomeScreen();
+            }
         }
 
         WebViewProvider.preload(this);
@@ -60,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (pendingUrl != null) {
+        if (pendingUrl != null && !FirstrunFragment.shouldShowFirstrun(this)) {
             // We have received an URL in onNewIntent(). Let's load it now.
+            // Unless we're trying to show the firstrun screen, in which case we leave it pending until
+            // firstrun is dismissed.
             showBrowserScreen(pendingUrl);
             pendingUrl = null;
         }
@@ -76,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.container, HomeFragment.create(), HomeFragment.FRAGMENT_TAG)
+                    .commit();
+        }
+    }
+
+    private void showFirstrun() {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(FirstrunFragment.FRAGMENT_TAG) == null) {
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, FirstrunFragment.create(), FirstrunFragment.FRAGMENT_TAG)
                     .commit();
         }
     }
